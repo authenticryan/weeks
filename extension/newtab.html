@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Tab</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="js/life.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body data-view="loading">
+
+  <!-- First run -->
+  <section class="setup" id="setup" hidden>
+    <form class="setup-form" id="setup-form" novalidate>
+      <p class="eyebrow">Weeks</p>
+      <h1 class="setup-title">Your life in weeks.</h1>
+      <p class="setup-lede">Each square is one week. Add your birthday and every new tab will show the weeks you’ve lived and the weeks you have left.</p>
+      <div class="fields" data-fields="setup"></div>
+      <button class="btn btn-primary btn-wide" type="submit">
+        <span>Show my weeks</span>
+        <svg class="btn-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.3 3.3 8.6 4l3.5 3.5H2v1h10.1L8.6 12l.7.7L14 8z"/></svg>
+      </button>
+      <p class="fineprint">Saved only in your Chrome profile. Nothing is sent anywhere. <a href="https://github.com/authenticryan/weeks/blob/main/PRIVACY.md" target="_blank" rel="noopener">Privacy policy</a></p>
+    </form>
+  </section>
+
+  <!-- Main app -->
+  <div class="app" id="app" hidden>
+    <aside class="rail">
+      <div class="rail-top">
+        <p class="brand">Weeks</p>
+        <p class="today" id="today"></p>
+      </div>
+
+      <!-- Weeks view rail -->
+      <div class="rail-body" data-for="weeks">
+        <div class="hero">
+          <p class="label">Weeks left</p>
+          <p class="hero-num" id="s-left">0</p>
+        </div>
+
+        <dl class="facts">
+          <div><dt>Weeks lived</dt><dd id="s-lived"></dd></div>
+          <div><dt>Age</dt><dd id="s-age"></dd></div>
+          <div id="s-year-row"><dt>This year</dt><dd id="s-year"></dd></div>
+          <div><dt>Life lived</dt><dd id="s-pct"></dd></div>
+        </dl>
+        <div class="meter" aria-hidden="true"><span id="s-bar"></span></div>
+
+        <div class="notice" id="s-notice" hidden>
+          <p class="notice-title" id="s-notice-title">One week older.</p>
+          <p class="notice-body" id="s-notice-body"></p>
+        </div>
+
+        <figure class="pick" id="s-rule" hidden>
+          <figcaption class="label" id="s-rule-n"></figcaption>
+          <blockquote id="s-rule-text"></blockquote>
+        </figure>
+        <button class="link" id="s-rule-empty" type="button" hidden>Write your rules</button>
+      </div>
+
+      <!-- Rules view rail -->
+      <div class="rail-body" data-for="rules">
+        <div class="hero">
+          <p class="label">Rules</p>
+          <p class="hero-text">The life you want, in twelve lines.</p>
+        </div>
+        <p class="helper">Short enough to remember. They save as you type, and one shows up on every new tab.</p>
+        <p class="status" id="r-status" aria-live="polite"></p>
+      </div>
+
+      <div class="rail-foot">
+        <ul class="legend" data-for="weeks">
+          <li><svg width="10" height="10" aria-hidden="true"><rect class="c lived" x=".5" y=".5" width="9" height="9"/></svg>Lived</li>
+          <li><svg width="10" height="10" aria-hidden="true"><rect class="c" x=".5" y=".5" width="9" height="9"/><rect class="dot" x="3" y="3" width="4" height="4"/></svg>This week</li>
+          <li><svg width="10" height="10" aria-hidden="true"><rect class="c" x=".5" y=".5" width="9" height="9"/></svg>Ahead</li>
+        </ul>
+        <button class="btn btn-ghost" id="open-settings" type="button">Settings</button>
+      </div>
+    </aside>
+
+    <main class="stage">
+      <div class="grid-wrap" data-for="weeks" id="grid-wrap"></div>
+      <ol class="rule-grid" data-for="rules" id="rule-grid"></ol>
+    </main>
+  </div>
+
+  <!-- View switch, bottom right -->
+  <div class="switcher" id="switcher" role="tablist" aria-label="View" hidden>
+    <button type="button" role="tab" data-view="weeks" aria-selected="true">Weeks</button>
+    <button type="button" role="tab" data-view="rules" aria-selected="false">Rules</button>
+  </div>
+
+  <!-- Settings modal -->
+  <div class="overlay" id="modal" hidden>
+    <form class="modal" id="settings-form" role="dialog" aria-modal="true" aria-labelledby="modal-title" novalidate>
+      <header class="modal-head">
+        <p class="label">Settings</p>
+        <h2 class="modal-title" id="modal-title">Your weeks</h2>
+        <button class="modal-close" type="button" data-close aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M12 4.7 11.3 4 8 7.3 4.7 4 4 4.7 7.3 8 4 11.3l.7.7L8 8.7l3.3 3.3.7-.7L8.7 8z"/></svg>
+        </button>
+      </header>
+      <div class="modal-body fields" data-fields="modal"></div>
+      <div class="modal-danger">
+        <button class="link link-danger" id="delete-data" type="button">Delete all my data</button>
+        <p class="helper">Removes your birthday, settings and rules from this browser and from Chrome sync.</p>
+      </div>
+      <footer class="modal-foot">
+        <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </footer>
+    </form>
+  </div>
+
+  <div class="tip" id="tip" role="tooltip" hidden></div>
+
+  <template id="fields-tpl">
+    <div class="field">
+      <label for="birth">Date of birth</label>
+      <input class="input" id="birth" name="birth" type="date" min="1900-01-01" required>
+    </div>
+    <div class="field">
+      <label for="years">Life expectancy</label>
+      <div class="suffix">
+        <input class="input" id="years" name="years" type="number" min="1" max="120" step="1" inputmode="numeric" required>
+        <span>years</span>
+      </div>
+      <p class="helper">One row per year.</p>
+    </div>
+    <fieldset class="field">
+      <legend>A new week starts on</legend>
+      <div class="segmented">
+        <label><input type="radio" name="weekStart" value="0"><span>Sunday</span></label>
+        <label><input type="radio" name="weekStart" value="1"><span>Monday</span></label>
+      </div>
+    </fieldset>
+    <p class="error" role="alert" hidden></p>
+  </template>
+</body>
+</html>
