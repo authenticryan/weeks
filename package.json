@@ -1,0 +1,12 @@
+{
+  "name": "weeks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Your life in weeks on every new tab. A Chrome extension.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node tests/life.test.js",
+    "package": "sh scripts/package.sh",
+    "assets": "sh scripts/store-assets.sh"
+  }
+}
