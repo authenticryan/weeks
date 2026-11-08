@@ -1,0 +1,18 @@
+<!doctype html>
+<!-- Store screenshots only. Seeds sample data (not a real person), then opens the new tab page. -->
+<meta charset="utf-8">
+<script>
+localStorage.setItem('weeks.settings', JSON.stringify({ birth: '1991-04-12', years: 80, weekStart: 0 }));
+localStorage.setItem('weeks.rules', JSON.stringify([
+  'In bed by 11 pm.',
+  'Up by 8 am.',
+  'The people I love get my best.',
+  'Move my body every day.',
+  'Phone stays out of the bedroom.',
+  'Say no to most things.',
+  'Read before screens.',
+  'Call Mom on Sundays.',
+  '', '', '', ''
+]));
+location.replace('newtab.html' + location.hash);
+</script>

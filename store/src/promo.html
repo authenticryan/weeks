@@ -1,0 +1,74 @@
+<!doctype html>
+<!-- Chrome Web Store promo tiles. Rendered by scripts/store-assets.sh: promo.html?small (440x280) and promo.html?marquee (1400x560). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Weeks promo</title>
+<style>
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 300; src: url("../../extension/fonts/IBMPlexSans-Light.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("../../extension/fonts/IBMPlexSans-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("../../extension/fonts/IBMPlexSans-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("../../extension/fonts/IBMPlexMono-Regular.woff2") format("woff2"); }
+  html, body { margin: 0; height: 100%; background: #fff; color: #161616; font-family: "IBM Plex Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+  .frame { box-sizing: border-box; width: 100vw; height: 100vh; display: flex; align-items: stretch; justify-content: space-between; }
+  .copy { display: flex; flex-direction: column; justify-content: space-between; }
+  .brand { font-weight: 600; margin: 0; }
+  .title { font-weight: 300; margin: 0; letter-spacing: 0; }
+  .lede { color: #525252; margin: 0; }
+  .foot { font-family: "IBM Plex Mono", monospace; color: #6f6f6f; margin: 0; }
+  .grid { align-self: center; }
+  .c { fill: #fff; stroke: #161616; stroke-width: 1; shape-rendering: crispEdges; }
+  .c.lived { fill: #161616; }
+  .dot { fill: #161616; shape-rendering: crispEdges; }
+
+  /* Fixed size: headless Chrome windows cannot be narrower than ~500px. */
+  .small .frame { width: 440px; height: 280px; padding: 28px 32px; }
+  .small .brand { font-size: 13px; }
+  .small .title { font-size: 34px; line-height: 40px; }
+  .small .lede { display: none; }
+  .small .foot { font-size: 11px; }
+
+  .marquee .frame { width: 1400px; height: 560px; padding: 64px 88px; }
+  .marquee .brand { font-size: 18px; }
+  .marquee .title { font-size: 72px; line-height: 80px; }
+  .marquee .lede { font-size: 22px; line-height: 32px; max-width: 520px; margin-top: 24px; }
+  .marquee .foot { font-size: 14px; }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="copy">
+      <p class="brand">Weeks</p>
+      <div>
+        <h1 class="title">Your life,<br>in weeks.</h1>
+        <p class="lede">Every new tab shows the weeks you’ve lived and the weeks you have left.</p>
+      </div>
+      <p class="foot">Free · No account · No tracking</p>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+<script>
+  var mode = location.search.slice(1) === 'marquee' ? 'marquee' : 'small';
+  document.body.className = mode;
+  var cfg = mode === 'marquee'
+    ? { cols: 32, rows: 24, s: 14, g: 4, filled: 0.45 }
+    : { cols: 12, rows: 17, s: 10, g: 3, filled: 0.45 };
+  var total = cfg.cols * cfg.rows;
+  var filled = Math.round(total * cfg.filled);
+  var w = cfg.cols * cfg.s + (cfg.cols - 1) * cfg.g;
+  var h = cfg.rows * cfg.s + (cfg.rows - 1) * cfg.g;
+  var out = ['<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">'];
+  for (var i = 0; i < total; i++) {
+    var x = (i % cfg.cols) * (cfg.s + cfg.g), y = Math.floor(i / cfg.cols) * (cfg.s + cfg.g);
+    out.push('<rect class="c' + (i < filled ? ' lived' : '') + '" x="' + (x + 0.5) + '" y="' + (y + 0.5) + '" width="' + (cfg.s - 1) + '" height="' + (cfg.s - 1) + '"/>');
+    if (i === filled) {
+      var d = Math.round(cfg.s * 0.4); if ((cfg.s - d) % 2) d -= 1;
+      var o = (cfg.s - d) / 2;
+      out.push('<rect class="dot" x="' + (x + o) + '" y="' + (y + o) + '" width="' + d + '" height="' + d + '"/>');
+    }
+  }
+  out.push('</svg>');
+  document.getElementById('grid').innerHTML = out.join('');
+</script>
+</body>
+</html>
